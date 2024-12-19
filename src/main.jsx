@@ -1,16 +1,13 @@
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
-import AuthContext from './context/AuthContext.jsx';
-import TaskContext from './context/TaskContext.jsx';
+import AuthProvider from "./context/AuthProvider.jsx";
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <AuthContext>
-      <TaskContext>
-        <App/>
-      </TaskContext>
-    </AuthContext>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </BrowserRouter>
-)
+);

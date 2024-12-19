@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 
-const Login = () => {
+const Login = ({handleLogin}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log("email is", email);
-    console.log("password is ", password);
+    handleLogin(email,password)
     setEmail("");
     setPassword("");
   };
@@ -39,7 +38,7 @@ const Login = () => {
             type="password"
             placeholder="Enter your password"
           />
-          <button className="text-emerald-200 border-2 p-4 rounded-3xl w-[10rem] mt-4">
+          <button className="text-emerald-200 border-2 p-4 rounded-3xl w-[10rem] mt-4 active:scale-95">
             LogIn
           </button>
         </form>
