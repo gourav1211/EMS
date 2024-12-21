@@ -8,6 +8,6 @@
 body{
     background-color: #111;
 }
-#taskbar::-webkit-scrollbar{
+.taskbar::-webkit-scrollbar{
     display: none;
 }

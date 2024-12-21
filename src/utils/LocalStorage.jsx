@@ -1,6 +1,7 @@
 const employees = [
   {
     id: 1,
+    firstName: "Aarav",
     email: "employee1@example.com",
     password: "123",
     tasks: [
@@ -25,9 +26,16 @@ const employees = [
         category: "Planning",
       },
     ],
+    taskNumbers: {
+      active: 1,
+      newTask: 2,
+      completed: 0,
+      failed: 0,
+    },
   },
   {
     id: 2,
+    firstName: "Ananya",
     email: "employee2@example.com",
     password: "123",
     tasks: [
@@ -53,9 +61,16 @@ const employees = [
         category: "Coordination",
       },
     ],
+    taskNumbers: {
+      active: 1,
+      newTask: 1,
+      completed: 1,
+      failed: 0,
+    },
   },
   {
     id: 3,
+    firstName: "Vihaan",
     email: "employee3@example.com",
     password: "123",
     tasks: [
@@ -80,9 +95,16 @@ const employees = [
         category: "Organization",
       },
     ],
+    taskNumbers: {
+      active: 2,
+      newTask: 2,
+      completed: 0,
+      failed: 0,
+    },
   },
   {
     id: 4,
+    firstName: "Ishita",
     email: "employee4@example.com",
     password: "123",
     tasks: [
@@ -108,9 +130,16 @@ const employees = [
         category: "Quality Assurance",
       },
     ],
+    taskNumbers: {
+      active: 2,
+      newTask: 1,
+      completed: 0,
+      failed: 1,
+    },
   },
   {
     id: 5,
+    firstName: "Kabir",
     email: "employee5@example.com",
     password: "123",
     tasks: [
@@ -135,8 +164,15 @@ const employees = [
         category: "Logistics",
       },
     ],
+    taskNumbers: {
+      active: 1,
+      newTask: 1,
+      completed: 0,
+      failed: 0,
+    },
   },
 ];
+
 
 const admin = [
   {
