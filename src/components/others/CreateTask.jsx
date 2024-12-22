@@ -18,7 +18,8 @@ const[newTask,setNewTask] = useState({})
     const data = JSON.parse(localStorage.getItem('employees'))
     data.forEach((elem)=>{
       if(assignTo == elem.firstName){
-        elem.tasks.push(newTask)
+        elem.tasks.push(newTask)  
+        elem.taskNumbers.newTask(elem.taskNumbers.taskNumbers+1)
       }
     })
     localStorage.setItem('employees',JSON.stringify(data))
