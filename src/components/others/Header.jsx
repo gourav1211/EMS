@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 const Header = (props) => {
   const [username, setUsername] = useState("");
   useEffect(() => {
-    if (!props.data["firstName"]) {
+    if (!props.data) {
       setUsername("Admin");
     } else {
       setUsername(props.data["firstName"]);
