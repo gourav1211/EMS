@@ -7,7 +7,7 @@ const employees = [
     tasks: [
       {
         active: true,
-        newTask: true,
+        newTask: false,
         completed: false,
         failed: false,
         title: "Submit Weekly Report",
@@ -28,7 +28,7 @@ const employees = [
     ],
     taskNumbers: {
       active: 1,
-      newTask: 2,
+      newTask: 1,
       completed: 0,
       failed: 0,
     },
@@ -50,7 +50,7 @@ const employees = [
         category: "Presentation",
       },
       {
-        active: true,
+        active: false,
         newTask: true,
         completed: false,
         failed: false,
@@ -76,7 +76,7 @@ const employees = [
     tasks: [
       {
         active: true,
-        newTask: true,
+        newTask: false,
         completed: false,
         failed: false,
         title: "Update Client Database",
@@ -85,7 +85,7 @@ const employees = [
         category: "Data Management",
       },
       {
-        active: true,
+        active: false,
         newTask: true,
         completed: false,
         failed: false,
@@ -109,7 +109,7 @@ const employees = [
     password: "123",
     tasks: [
       {
-        active: true,
+        active: false,
         newTask: false,
         completed: false,
         failed: true,
@@ -119,7 +119,7 @@ const employees = [
         category: "Development",
       },
       {
-        active: true,
+        active: false,
         newTask: true,
         completed: false,
         failed: false,

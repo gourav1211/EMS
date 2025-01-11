@@ -13,7 +13,7 @@ const CompleteTask = ({data}) => {
           {data.description}
         </p>
         <div className="">
-          <button className="mt-4 w-full bg-green-800 rounded px-2 py-1 active:scale-95">Complete</button>
+          <button className="mt-4 w-full bg-green-800 rounded px-2 py-1">Completed</button>
         </div>
       </div>
     </div>
