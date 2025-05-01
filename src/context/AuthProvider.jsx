@@ -1,8 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios'; // Import axios
 
-// Define the API base URL
-const API_URL = 'http://localhost:5000/api'; // Adjust if your backend runs on a different port
+// Base URL from Vite env (must begin with VITE_ prefix)
+const API_URL = import.meta.env.VITE_API_URI_BACKEND || 'http://localhost:5000/api';
 
 const AuthContext = createContext(null);
 
