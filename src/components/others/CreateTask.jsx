@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api'; // Adjust if needed
+// Base URL from Vite env (must begin with VITE_ prefix)
+const API_URL = import.meta.env.VITE_API_URI_BACKEND || 'http://localhost:5000/api';
 
 // Receive employeeId and onTaskCreated callback as props
 const CreateTask = ({ employeeId, onTaskCreated }) => {
