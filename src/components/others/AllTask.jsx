@@ -1,31 +1,43 @@
-import React, { useContext } from "react";
-import { AuthContext } from "../../context/AuthProvider";
+import React from 'react';
 
-const AllTask = () => {
-  const [userData,setUserdata] = useContext(AuthContext);
+// Receive tasks as props
+const AllTask = ({ tasks = [] }) => {
+
+  const getStatus = (task) => {
+    if (task.completed) return { text: 'Completed', color: 'text-green-600', bgColor: 'bg-green-100' };
+    if (task.failed) return { text: 'Failed', color: 'text-red-600', bgColor: 'bg-red-100' };
+    if (task.active) return { text: 'Active', color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
+    if (task.newTask) return { text: 'New', color: 'text-blue-600', bgColor: 'bg-blue-100' };
+    return { text: 'Unknown', color: 'text-gray-600', bgColor: 'bg-gray-100' };
+  };
 
   return (
-    <div className="bg-black p-5 mt-5 rounded">
-      <div className="bg-red-400 py-2 px-4 flex justify-between mb-2">
-        <h2 className="text-lg font-medium w-1/5">Employee Name</h2>
-        <h3 className="text-lg font-medium w-1/5">New Task</h3>
-        <h5 className="text-lg font-medium w-1/5">Active Task</h5>
-        <h5 className="text-lg font-medium w-1/5">Completed</h5>
-        <h5 className="text-lg font-medium w-1/5">Failed</h5>
-      </div>
-      <div className="overflow-auto">
-        {userData.map((elem,idx) => {
-          return (
-            <div key={idx} className="border-2 border-emerald-500 py-2 px-4 flex justify-between mb-2">
-              <h2 className="text-lg font-medium w-1/5 text-red-500">{elem.firstName}</h2>
-              <h3 className="text-lg font-medium w-1/5 text-blue-500">{elem.taskNumbers.newTask }</h3>
-              <h5 className="text-lg font-medium w-1/5 text-yellow-500">{elem.taskNumbers.active }</h5>
-              <h5 className="text-lg font-medium w-1/5 text-white">{elem.taskNumbers.completed }</h5>
-              <h5 className="text-lg font-medium w-1/5 text-red-500">{elem.taskNumbers.failed }</h5>
-            </div>
-          );
-        })}
-      </div>
+    <div className="mt-6">
+      <h4 className="text-md font-medium mb-3">All Tasks ({tasks.length})</h4>
+      {tasks.length === 0 ? (
+        <p className="text-sm text-gray-600">No tasks assigned to this employee.</p>
+      ) : (
+        <div className="space-y-3">
+          {tasks.map((task) => {
+            const status = getStatus(task);
+            return (
+               // Use task.id which is the mapped _id
+              <div key={task.id} className={`p-3 rounded border shadow-sm ${status.bgColor}`}>
+                <div className="flex justify-between items-start">
+                  <div>
+                     <h5 className={`font-medium ${task.completed || task.failed ? 'line-through' : ''}`}>{task.title}</h5>
+                     <p className={`text-sm text-gray-600 ${task.completed || task.failed ? 'line-through' : ''}`}>{task.description}</p>
+                     <p className="text-xs text-gray-500 mt-1">Due: {task.date} | Category: {task.category}</p>
+                  </div>
+                  <span className={`text-xs font-semibold px-2 py-1 rounded ${status.bgColor} ${status.color}`}>
+                    {status.text}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

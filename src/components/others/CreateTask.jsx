@@ -1,133 +1,84 @@
-import React, { useContext, useState } from "react";
-import { AuthContext } from "../../context/AuthProvider";
+import React, { useState } from 'react';
+import axios from 'axios';
 
-const CreateTask = () => {
-  const [userData, setUserData] = useContext(AuthContext);
+const API_URL = 'http://localhost:5000/api'; // Adjust if needed
 
-  const [taskTitle, setTaskTitle] = useState("");
-  const [taskDescription, setTaskDescription] = useState("");
-  const [taskDate, setTaskDate] = useState("");
-  const [assignTo, setAssignTo] = useState("");
-  const [category, setCategory] = useState("");
+// Receive employeeId and onTaskCreated callback as props
+const CreateTask = ({ employeeId, onTaskCreated }) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [date, setDate] = useState('');
+  const [category, setCategory] = useState('');
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [newTask, setNewTask] = useState({});
-  const submitHandler = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-    const taskInfo = {
-      active: false,
-      newTask: true,
-      failed: false,
-      completed: false,
-      title: taskTitle,
-      description: taskDescription,
-      date: taskDate,
-      category: category,
-    };
+    if (!employeeId) {
+        setError("No employee selected.");
+        setLoading(false);
+        return;
+    }
 
-    const updatedData = userData.map((elem) => {
-      if (assignTo === elem.firstName) {
-        // let temp_arr = elem.tasks;
-        // temp_arr.push(taskInfo);
-        return {
-          ...elem,
-          tasks: [...elem.tasks, taskInfo], 
-          // tasks: temp_arr,
-          taskNumbers: {
-            ...elem.taskNumbers,
-            newTask: elem.taskNumbers.newTask + 1, 
-          },
-        };
+    const newTask = { title, description, date, category };
+
+    try {
+      // POST to the specific employee's task endpoint
+      // Note: employeeId here is the MongoDB _id
+      await axios.post(`${API_URL}/employees/${employeeId}/tasks`, newTask);
+
+      // Clear the form
+      setTitle('');
+      setDescription('');
+      setDate('');
+      setCategory('');
+
+      // Notify parent component that task was created
+      if (onTaskCreated) {
+        onTaskCreated();
       }
-      return elem;
-    });
 
-    setUserData(updatedData); // Update the user data state
-    console.log("New data: ", updatedData);
-
-    // Reset form fields after submission
-    setAssignTo("");
-    setCategory("");
-    setTaskDate("");
-    setTaskTitle("");
-    setTaskDescription("");
+    } catch (err) {
+      console.error("Error creating task:", err);
+      setError(err.response?.data?.msg || 'Failed to create task.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="mt-5 pl-5 pr-5">
-      <form
-        onSubmit={(e) => {
-          submitHandler(e);
-        }}
-        className="flex w-full bg-gray-800 p-3 items-start justify-between flex-wrap relative"
-      >
-        <div className="w-1/2">
-          <div>
-            <h3>Task title</h3>
-            <input
-              value={taskTitle}
-              onChange={(e) => {
-                setTaskTitle(e.target.value);
-              }}
-              className="bg-transparent border-2 p-1 mt-1 mb-1 rounded border-gray-500"
-              type="text"
-              placeholder="make ui design"
-            />
-          </div>
-          <div>
-            <h3>Date</h3>
-            <input
-              value={taskDate}
-              onChange={(e) => {
-                setTaskDate(e.target.value);
-              }}
-              className="bg-transparent border-2 rounded border-gray-500 p-1 mt-1 mb-1"
-              type="date"
-            />
-          </div>
+    <div className="mt-4 p-4 border rounded shadow-sm bg-gray-50">
+      <h3 className="text-lg font-medium mb-3">Create New Task</h3>
+      <form onSubmit={handleSubmit} className="space-y-4">
+         <div>
+           <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+           <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+         </div>
+         <div>
+           <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+           <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} required rows="3" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+         </div>
+         <div>
+           <label htmlFor="date" className="block text-sm font-medium text-gray-700">Due Date</label>
+           <input type="date" id="date" value={date} onChange={(e) => setDate(e.target.value)} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+         </div>
+         <div>
+           <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+           <input type="text" id="category" value={category} onChange={(e) => setCategory(e.target.value)} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+         </div>
 
-          <div>
-            <h3>Assign to</h3>
-            <input
-              value={assignTo}
-              onChange={(e) => {
-                setAssignTo(e.target.value);
-              }}
-              className="mt-1 mb-1 p-1 bg-transparent border-2 border-gray-500 rounded"
-              type="text"
-              placeholder="employee name"
-            />
-          </div>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <div>
-            <h3>Category</h3>
-            <input
-              value={category}
-              onChange={(e) => {
-                setCategory(e.target.value);
-              }}
-              className="mt-1 mb-4 bg-transparent border-2 border-gray-500 p-1 rounded"
-              type="text"
-              placeholder="design ya dev ya etc"
-            />
-          </div>
-        </div>
-
-        <div className="w-1/2 flex flex-col">
-          <h3>Description</h3>
-          <textarea
-            value={taskDescription}
-            onChange={(e) => {
-              setTaskDescription(e.target.value);
-            }}
-            className="bg-transparent text-white border-2 border-gray-500 mt-1 mb-2 p-1 rounded"
-            cols="30"
-            rows="10"
-          ></textarea>
-          <button className="border-2 p-3 w-52 text-xl font-semibold h-15 rounded bg-emerald-500 border-emerald-500 active:scale-95  top-[50%] right-40">
-            Create Task{" "}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className={`px-4 py-2 text-white rounded ${loading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+        >
+          {loading ? 'Creating...' : 'Add Task'}
+        </button>
       </form>
     </div>
   );

@@ -1,31 +1,40 @@
-import React from 'react'
-import FailedTask from './FailedTask';
+import React from 'react';
 
-const AcceptTask = ({data,onCompleteTask,onFailedTask}) => {
-
-  const handleCompleteTask = () => {
-    onCompleteTask(data.title);
-  }
-  const handleFailedTask = () => {
-    onFailedTask(data.title);
-  }
+// Receive tasks, onCompleteTask, onFailTask as props
+const AcceptTask = ({ tasks = [], onCompleteTask, onFailTask }) => {
   return (
-    <div className='flex-shrink-0 h-full w-[250px] bg-red-400 rounded-xl p-5'>
-        <div className='flex justify-between items-center'>
-            <h3 className='bg-red-600 text-sm px-3 py-1 rounded' >
-                {data.category}
-            </h3>
-            <h4 className='text-base'>{data.date}</h4>
-        </div>
-        <h2 className='mt-3 text-xl font-semibold'>{data.title}</h2>
-        <p className='text-sm mt-2'>{data.description}</p>
-        <div className='flex justify-between mt-4 '>
-            <button onClick={handleCompleteTask} className='bg-green-500 active:scale-95 rounded mr-1 py-1 px-2 text-sm'>Mark as Completed</button>
-            <button onClick={handleFailedTask} className='bg-red-500 rounded active:scale-95 py-1 px-2 text-sm'>Mark as Failed</button>
-        </div>
-      </div>
+    <div className="bg-yellow-100 p-4 rounded shadow">
+      <h3 className="text-lg font-semibold mb-3 text-yellow-800">Active Tasks ({tasks.length})</h3>
+      {tasks.length === 0 ? (
+        <p className="text-sm text-gray-600">No active tasks.</p>
+      ) : (
+        <ul className="space-y-2">
+          {tasks.map((task) => (
+             // Use task.id which is the mapped _id
+            <li key={task.id} className="bg-white p-3 rounded border border-yellow-200 shadow-sm">
+              <h4 className="font-medium">{task.title}</h4>
+              <p className="text-sm text-gray-600">{task.description}</p>
+              <p className="text-xs text-gray-500">Due: {task.date} | Category: {task.category}</p>
+              <div className="mt-2 space-x-2">
+                <button
+                  onClick={() => onCompleteTask(task.id)} // Pass task.id
+                  className="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
+                >
+                  Complete
+                </button>
+                <button
+                  onClick={() => onFailTask(task.id)} // Pass task.id
+                  className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
+                >
+                  Fail
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
 
-  )
-}
-
-export default AcceptTask
+export default AcceptTask;

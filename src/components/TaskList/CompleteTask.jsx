@@ -1,21 +1,24 @@
-import React from "react";
+import React from 'react';
 
-const CompleteTask = ({data}) => {
+// Receive tasks as props
+const CompleteTask = ({ tasks = [] }) => {
   return (
-    <div>
-      <div className="flex-shrink-0 h-full w-[250px] bg-green-400 rounded-xl p-5">
-        <div className="flex justify-between items-center">
-          <h3 className="bg-red-600 text-sm px-3 py-1 rounded">{data.category}</h3>
-          <h4 className="text-base">{data.date} </h4>
-        </div>
-        <h2 className="mt-3 text-xl font-semibold">{data.title}</h2>
-        <p className="text-sm mt-2">
-          {data.description}
-        </p>
-        <div className="">
-          <button className="mt-4 w-full bg-green-800 rounded px-2 py-1">Completed</button>
-        </div>
-      </div>
+    <div className="bg-green-100 p-4 rounded shadow">
+      <h3 className="text-lg font-semibold mb-3 text-green-800">Completed Tasks ({tasks.length})</h3>
+      {tasks.length === 0 ? (
+        <p className="text-sm text-gray-600">No completed tasks.</p>
+      ) : (
+        <ul className="space-y-2">
+          {tasks.map((task) => (
+             // Use task.id which is the mapped _id
+            <li key={task.id} className="bg-white p-3 rounded border border-green-200 shadow-sm opacity-75">
+              <h4 className="font-medium line-through">{task.title}</h4>
+              <p className="text-sm text-gray-500 line-through">{task.description}</p>
+              <p className="text-xs text-gray-400">Completed | Category: {task.category}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

@@ -1,52 +1,90 @@
-import React, { useContext, useEffect, useState } from "react";
-import Login from "./components/Auth/Login";
-import EmployeeDashboard from "./components/Dashboard/EmployeeDashboard";
-import AdminDashboard from "./components/Dashboard/AdminDashboard";
-import { AuthContext } from "./context/AuthProvider";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Login from './components/Auth/Login';
+import AdminDashboard from './components/Dashboard/AdminDashboard';
+import EmployeeDashboard from './components/Dashboard/EmployeeDashboard';
+import { AuthProvider, useAuth } from './context/AuthProvider'; // Import useAuth
+import Header from './components/others/Header'; // Assuming Header handles logout display
 
-const App = () => {
-  const [user, setUser] = useState(null);
-  const [loggedInUserData, setLoggedInUserData] = useState(null);
-  const [userData, SetUserData] = useContext(AuthContext);
+// Protected Route Component
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { user, role } = useAuth();
 
-  useEffect(() => {
-    const loggedInUser = localStorage.getItem("loggedInUser");
+  if (!user || !role) {
+    // Not logged in, redirect to login
+    return <Navigate to="/login" replace />;
+  }
 
-    if (loggedInUser) {
-      const userData = JSON.parse(loggedInUser);
-      setUser(userData.role);
-      setLoggedInUserData(userData.data);
-    }
-  }, []);
+  if (allowedRoles && !allowedRoles.includes(role)) {
+    // Logged in but wrong role, redirect to login (or a specific unauthorized page)
+    // You might want a more user-friendly approach here
+    return <Navigate to="/login" replace />;
+  }
 
-  const handleLogin = (email, password) => {
-    if (email == "admin@example.com" && password == "123") {
-      setUser("admin");
-      localStorage.setItem("loggedInUser", JSON.stringify({ role: "admin" }));
-    } else if (userData) {
-      const employee = userData.find((e) => email == e.email && e.password == password);
-      if (employee) {
-        setUser("employee");
-        setLoggedInUserData(employee);
-        localStorage.setItem(
-          "loggedInUser",
-          JSON.stringify({ role: "employee", data: employee })
-        );
-      } else {
-        alert("Invalid Credentials");
-      }
-    }
-  };
+  // Authorized
+  return children;
+};
+
+
+function AppContent() {
+  const { user, role } = useAuth(); // Get user and role from context
 
   return (
-    <>
-      {!user ? <Login handleLogin={handleLogin} /> : ""}
-      {user == 'admin' ? <AdminDashboard changeUser={setUser} /> : (user == 'employee' ? <EmployeeDashboard changeUser={setUser} data={loggedInUserData} /> : null) }
-      {/* <Login/> */}
-      {/* <EmployeeDashboard/> */}
-      {/* <AdminDashboard/> */}
-    </>
+    <div className="flex flex-col min-h-screen">
+       {user && <Header />} {/* Show Header only when logged in */}
+      <main className="flex-grow">
+        <Routes>
+          {/* Public Login Route */}
+          <Route path="/login" element={!user ? <Login /> : (role === 'admin' ? <Navigate to="/admin/dashboard" replace /> : <Navigate to="/employee/dashboard" replace />)} />
+
+          {/* Protected Admin Route */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+           {/* Add other admin routes here within ProtectedRoute */}
+
+
+          {/* Protected Employee Route */}
+          <Route
+            path="/employee/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['employee']}>
+                <EmployeeDashboard />
+              </ProtectedRoute>
+            }
+          />
+          {/* Add other employee routes here within ProtectedRoute */}
+
+
+          {/* Default route: Redirect to login if not logged in, or appropriate dashboard if logged in */}
+          <Route
+            path="*"
+            element={
+              user
+                ? (role === 'admin' ? <Navigate to="/admin/dashboard" replace /> : <Navigate to="/employee/dashboard" replace />)
+                : <Navigate to="/login" replace />
+            }
+          />
+        </Routes>
+      </main>
+    </div>
   );
-};
+}
+
+
+function App() {
+  return (
+    <AuthProvider> {/* Wrap everything in AuthProvider */}
+      <Router>
+        <AppContent /> {/* Use AppContent to access auth context */}
+      </Router>
+    </AuthProvider>
+  );
+}
 
 export default App;
