@@ -1,24 +1,30 @@
-import React from "react";
+import React from 'react';
 
-const NewTask = ({data,onAcceptTask}) => {
-  const handleAcceptTask = () => {
-    onAcceptTask(data.title);
-  };
+// Receive tasks and onAcceptTask function as props
+const NewTask = ({ tasks = [], onAcceptTask }) => {
   return (
-    <div className="flex-shrink-0 h-full w-[250px] bg-yellow-400 rounded-xl p-5">
-      <div className="flex justify-between items-center">
-        <h3 className="bg-red-600 text-sm px-3 py-1 rounded">{data.category}</h3>
-        <h4 className="text-base">{data.date}</h4>
-      </div>
-      <h2 className="mt-3 text-xl font-semibold">{data.title}</h2>
-      <p className="text-sm mt-2">
-        {data.description}
-      </p>
-      <div className="mt-4">
-        <button onClick={handleAcceptTask} className="bg-green-500 px-2 rounded active:scale-95 py-1 text-sm">
-          Accept Task
-        </button>
-      </div>
+    <div className="bg-blue-100 p-4 rounded shadow">
+      <h3 className="text-lg font-semibold mb-3 text-blue-800">New Tasks ({tasks.length})</h3>
+      {tasks.length === 0 ? (
+        <p className="text-sm text-gray-600">No new tasks.</p>
+      ) : (
+        <ul className="space-y-2">
+          {tasks.map((task) => (
+            // Use task.id which is the mapped _id
+            <li key={task.id} className="bg-white p-3 rounded border border-blue-200 shadow-sm">
+              <h4 className="font-medium">{task.title}</h4>
+              <p className="text-sm text-gray-600">{task.description}</p>
+              <p className="text-xs text-gray-500">Due: {task.date} | Category: {task.category}</p>
+              <button
+                onClick={() => onAcceptTask(task.id)} // Pass task.id
+                className="mt-2 px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
+              >
+                Accept Task
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

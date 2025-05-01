@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
-    color: #fff;
+@layer base {
+  body {
+    @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-white;
+  }
 }
-body{
-    background-color: #111;
-}
+
 .taskbar::-webkit-scrollbar{
     display: none;
 }
