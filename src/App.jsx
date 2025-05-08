@@ -30,12 +30,21 @@ function AppContent() {
   const { user, role } = useAuth(); // Get user and role from context
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
        {user && <Header />} {/* Show Header only when logged in */}
       <main className="flex-grow">
         <Routes>
           {/* Public Login Route */}
-          <Route path="/login" element={!user ? <Login /> : (role === 'admin' ? <Navigate to="/admin/dashboard" replace /> : <Navigate to="/employee/dashboard" replace />)} />
+          <Route 
+            path="/login" 
+            element={
+              !user 
+                ? <Login /> 
+                : (role === 'admin' 
+                    ? <Navigate to="/admin/dashboard" replace /> 
+                    : <Navigate to="/employee/dashboard" replace />)
+            } 
+          />
 
           {/* Protected Admin Route */}
           <Route
@@ -66,7 +75,9 @@ function AppContent() {
             path="*"
             element={
               user
-                ? (role === 'admin' ? <Navigate to="/admin/dashboard" replace /> : <Navigate to="/employee/dashboard" replace />)
+                ? (role === 'admin' 
+                    ? <Navigate to="/admin/dashboard" replace /> 
+                    : <Navigate to="/employee/dashboard" replace />)
                 : <Navigate to="/login" replace />
             }
           />

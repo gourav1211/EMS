@@ -1,13 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
-    @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-white;
+    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
   }
 }
 
-.taskbar::-webkit-scrollbar{
-    display: none;
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-600 hover:bg-primary-700 text-white focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-secondary-600 hover:bg-secondary-700 text-white focus:ring-secondary-500;
+  }
+  
+  .btn-success {
+    @apply btn bg-accent-600 hover:bg-accent-700 text-white focus:ring-accent-500;
+  }
+  
+  .btn-danger {
+    @apply btn bg-red-600 hover:bg-red-700 text-white focus:ring-red-500;
+  }
+  
+  .btn-outline {
+    @apply btn bg-transparent border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-white;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-md;
+  }
+  
+  .form-input {
+    @apply block w-full px-3 py-2 rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors duration-200;
+  }
+}
+
+.taskbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Glass morphism effect */
+.glassmorphism {
+  @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm;
+}
+
+/* Modern transitions */
+.transition-all-fast {
+  @apply transition-all duration-300 ease-in-out;
 }
