@@ -13,6 +13,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showCreateTask, setShowCreateTask] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchEmployees = async () => {
     setLoading(true);
@@ -42,7 +43,7 @@ const AdminDashboard = () => {
     fetchEmployees();
   }, []);
 
-  const refreshEmployeeData = async (employeeId) => {
+  const refreshEmployeeData = async () => {
      try {
         await fetchEmployees();
      } catch (err) {
@@ -56,66 +57,181 @@ const AdminDashboard = () => {
     setShowCreateTask(false);
   };
 
-  if (loading && employees.length === 0) return <div className="p-4">Loading employees...</div>;
-  if (error) return <div className="p-4 text-red-500">{error}</div>;
+  const filteredEmployees = searchTerm
+    ? employees.filter(emp => 
+        emp.firstName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        emp.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    : employees;
+
+  if (loading && employees.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md flex items-center space-x-4 text-red-500">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <div className="text-xl font-medium text-red-600">Error</div>
+          <p className="text-gray-800">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto p-4 bg-white dark:bg-gray-800 dark:text-white">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Admin Dashboard</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="container mx-auto p-4 animate-fade-in">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Admin Dashboard</h2>
+        <p className="text-gray-600 dark:text-gray-400">Manage employees and their tasks efficiently</p>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Employee List */}
-        <div className="md:col-span-1 bg-white dark:bg-gray-700 p-4 rounded shadow border border-gray-200 dark:border-gray-600">
-          <h3 className="text-lg font-medium mb-2">Employees</h3>
-          {loading && <p>Refreshing...</p>}
-          {!loading && employees.length === 0 ? (
-            <p>No employees found.</p>
-          ) : (
-            <ul className="space-y-2">
-              {employees.map((employee) => (
-                <li key={employee.id}>
-                  <button
-                    onClick={() => handleSelectEmployee(employee)}
-                    className={`w-full text-left p-2 rounded ${selectedEmployee?.id === employee.id ? 'bg-indigo-100 text-indigo-900 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-600'}`}
-                  >
-                    {employee.firstName} ({employee.email})
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+        <div className="lg:col-span-1">
+          <div className="card p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Employees</h3>
+              <button 
+                onClick={refreshEmployeeData} 
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                title="Refresh employees"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search employees..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="form-input pl-10 w-full"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            
+            {loading && <p className="text-center py-2 text-gray-500 dark:text-gray-400">Refreshing...</p>}
+            
+            {!loading && filteredEmployees.length === 0 ? (
+              <div className="text-center py-8">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <p className="mt-2 text-gray-500 dark:text-gray-400">No employees found</p>
+              </div>
+            ) : (
+              <ul className="space-y-2 max-h-[calc(100vh-350px)] overflow-y-auto pr-1">
+                {filteredEmployees.map((employee) => (
+                  <li key={employee.id}>
+                    <button
+                      onClick={() => handleSelectEmployee(employee)}
+                      className={`w-full text-left p-3 rounded-lg transition-all ${
+                        selectedEmployee?.id === employee.id 
+                          ? 'bg-primary-50 dark:bg-primary-900/30 border-l-4 border-primary-500' 
+                          : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center">
+                            <span className="text-primary-700 dark:text-primary-300 font-medium">
+                              {employee.firstName.charAt(0)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">{employee.firstName}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{employee.email}</p>
+                        </div>
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         {/* Employee Details & Tasks */}
-        <div className="md:col-span-2 bg-white dark:bg-gray-700 p-4 rounded shadow border border-gray-200 dark:border-gray-600">
-          {selectedEmployee ? (
-            <>
-              <h3 className="text-lg font-medium mb-2">
-                Tasks for {selectedEmployee.firstName}
-              </h3>
-              <TaskListNumbers taskNumbers={selectedEmployee.taskNumbers} />
+        <div className="lg:col-span-3">
+          <div className="card h-full p-6">
+            {selectedEmployee ? (
+              <div className="animate-fade-in">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                      Tasks for {selectedEmployee.firstName}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{selectedEmployee.email}</p>
+                  </div>
+                  
+                  <button
+                    onClick={() => setShowCreateTask(!showCreateTask)}
+                    className={`btn ${showCreateTask ? 'btn-outline' : 'btn-success'} flex items-center`}
+                  >
+                    {showCreateTask ? (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Cancel
+                      </>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        Create Task
+                      </>
+                    )}
+                  </button>
+                </div>
+                
+                <div className="mb-4">
+                  <TaskListNumbers taskNumbers={selectedEmployee.taskNumbers} />
+                </div>
 
-              <button
-                onClick={() => setShowCreateTask(!showCreateTask)}
-                className="my-4 px-4 py-2 bg-green-500 text-white dark:text-white rounded hover:bg-green-600 dark:hover:bg-green-700"
-              >
-                {showCreateTask ? 'Cancel' : 'Create New Task'}
-              </button>
+                {showCreateTask && (
+                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 mb-6 border border-gray-100 dark:border-gray-700 animate-slide-up">
+                    <CreateTask
+                      employeeId={selectedEmployee.id}
+                      onTaskCreated={() => {
+                        setShowCreateTask(false);
+                        refreshEmployeeData();
+                      }}
+                    />
+                  </div>
+                )}
 
-              {showCreateTask && (
-                <CreateTask
-                  employeeId={selectedEmployee.id}
-                  onTaskCreated={() => {
-                     setShowCreateTask(false);
-                     refreshEmployeeData(selectedEmployee.id);
-                   }}
-                />
-              )}
-
-              <AllTask tasks={selectedEmployee.tasks || []} />
-            </>
-          ) : (
-            <p>Select an employee to view their tasks.</p>
-          )}
+                <div>
+                  <AllTask tasks={selectedEmployee.tasks || []} />
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-96">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 6h16M4 12h16M4 18h7" />
+                </svg>
+                <p className="text-lg text-gray-500 dark:text-gray-400">Select an employee to view their tasks</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
