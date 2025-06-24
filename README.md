@@ -1,4 +1,4 @@
-# EMS (Employee Management System)
+# EMS - Employee Task Management System
 
 EMS is a web application built with React and Vite, designed to manage employee data and tasks efficiently. This project leverages modern web technologies to provide a fast and responsive user experience.
 
